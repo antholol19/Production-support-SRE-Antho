@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# function to create random numbers and put them in a file
+randomizer()
+{
+count=0
+while [ $count -lt "$2" ]; do
+
+        # Append the number in the file
+        echo $RANDOM >> "$1"
+        (( count++ ))
+done
+
+echo "$1 created!"
+}
+
+# Function to create a file if it does not exist
+exist()
+{
+        if [[ -f $"$1" ]]; then
+                echo "The file already exist!"
+                exit 1
+        else
+                touch "$1"
+        fi
+}
+
+# main code
+echo "Random numbers generator"
+read -p "Enter the name of the file: " file
+exist $file
+read -p "How many random numbers do you want? " lines
+randomizer $file $lines
+

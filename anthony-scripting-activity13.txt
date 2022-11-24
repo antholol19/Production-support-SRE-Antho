@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# Function to compare the uniqueness of numbers between both files
+diff()
+{
+        file1="$1"
+        file2="$2"
+        array1=()
+        array2=()
+
+        # Reading each file
+        while read lines; do
+                array+=($lines)
+        done < $file1
+
+        while read lines; do
+                array2+=($lines)
+        done < $file2
+
+        echo "Only in file" $file1
+
+        # Compare the numbers
+        for i in ${array[@]}; do
+                found=0
+                for j in ${array2[@]}; do
+                        if [[ $i -eq $j ]]; then
+                                (( found++ ))
+                                break
+                        fi
+                done
+                # If there's not duplicate, inform the user
+                if [ $found -eq 0 ]; then
+                       echo "$i"
+                fi
+        done
+
+}
+
+# Function to verify if the file exist
+exist()
+{
+        if [[ -f "$1" ]]; then
+               :
+        else
+                echo "The file does not exist!"
+                exit 1
+
+        fi
+}
+
+# main
+# Ask the user to enter the files name
+read -p "Enter file1: " file1
+exist $file1
+read -p "Enter file2: " file2
+exist $file2
+
+diff $file1 $file2
+diff $file2 $file1

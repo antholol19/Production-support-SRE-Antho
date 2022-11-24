@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Function that contains all the question
+question()
+{
+        score=0
+
+        #question 1
+        read -p "1. 10*10=100 [T/F]: " ans
+        answer="T"
+        verify $ans $answer
+
+        #question 2
+        read -p "2. 1*0=1 [T/F]: " ans
+        answer="F"
+        verify $ans $answer
+
+        #question 3
+        read -p "3. 6/2=3 [T/F]: " ans
+        answer="T"
+        verify $ans $answer
+
+        #question 4
+        read -p "4. 7x4=28 [T/F]: " ans
+        answer="T"
+        verify $ans $answer
+
+        #question 5
+        read -p "5. 6x5=35 [T/F]: " ans
+        answer="F"
+        verify $ans $answer
+
+        #question 6
+        read -p "6. 7+6=13 [T/F]: " ans
+        answer="T"
+        verify $ans $answer
+
+        #question 7
+        read -p "7. 29-3=26 [T/F]: " ans
+        answer="T"
+        verify $ans $answer
+
+        #question 8
+        read -p "8. 50/2=20 [T/F]: " ans
+        answer="F"
+        verify $ans $answer
+
+        #question 9
+        read -p "9. 10.5x30=310 [T/F]: " ans
+        answer="F"
+        verify $ans $answer
+
+        #question 10
+        read -p "10. 3928 + (364 - 872) x 5 + 4 = 1392 [T/F]: " ans
+        answer="T"
+        verify $ans $answer
+
+}
+
+# Verify function to compare the answers
+verify()
+{
+        ans="$1"
+        if [ ${ans^} == "$2" ]; then
+                echo "Good answer!"
+                (( score++ ))
+        else
+                echo "Bad answer!"
+        fi
+}
+
+echo "Welcome to the math quiz!"
+question
+echo "Score: $score/10"
+
+

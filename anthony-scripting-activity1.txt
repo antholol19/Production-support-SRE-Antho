@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Username: " $USER
+echo "Date: " `date +%Y.%m.%d`
+echo "Time: " `date +%T`
+echo "Current directory: " `pwd`
+echo "Number of files in current directory: " `ls | wc -l`
+echo "Biggest file in current directory: " `ls -S | head -n 1`

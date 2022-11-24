@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Function to verify if the file exist
+exist()
+{
+        if [[ -f "$1" ]]; then
+               :
+        else
+                echo "The file does not exist!"
+                exit 1
+
+        fi
+}
+
+echo "Compare common words between two files"
+
+# Ask the user to enter the files name
+read -p "Enter the first file: " file1
+exist $file1
+read -p "Enter the second file: " file2
+exist $file2
+
+found=0
+
+# Use a associative array to store to prevent duplicates
+declare -A array
+
+# Loop in the first file line by line
+while read line; do
+
+        # Loop word by word
+        for word in $line; do
+
+                # search for the word in the second file
+                var=$(echo grep -w $word $file2)
+
+                # Verify if it finds nothing
+                if [ -z "$var" ]; then
+                        :
+                else
+                        # a word in common is found
+                        array["$word"]=1
+                        (( found++ ))
+                fi
+        done
+done < $file1
+
+# verify if they find at least one word
+if [ $found -gt 0 ]; then
+        echo "There is at least one word in common"
+        echo "The words in common are:"
+        echo "${!array[@]}"
+else
+        echo "There is no word in common"
+fi
+

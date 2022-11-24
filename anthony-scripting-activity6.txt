@@ -1,0 +1,32 @@
+#!/bin/bash
+
+read -p "Enter a number: " a
+read -p "Enter a second number: " b
+
+# Make sure that a and b are numbers
+if [ $a -eq $a ] 2>/dev/null && [ $b -eq  $b ] 2>/dev/null; then
+        # Compare both numbers
+        if [ $a -gt $b ]; then
+                echo "True"
+        else
+                echo "False"
+        fi
+else
+        echo "You must enter numbers!"
+fi
+
+
+#Second script version
+#!/bin/bash
+
+read -p "Enter a number: " a
+read -p "Enter a second number: " b
+
+# Make sure that a and b are numbers
+if [ $a -eq $a ] 2>/dev/null && [ $b -eq  $b ] 2>/dev/null; then
+        # difference between both numbers
+        diff=$(( $a - $b ))
+        echo "The numbers differ by" ${diff#-}
+else
+        echo "You must enter numbers!"
+fi

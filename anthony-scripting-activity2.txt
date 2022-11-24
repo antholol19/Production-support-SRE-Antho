@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Enter directory name"
+read theDir
+
+# Verify if the directory exist
+if [ -d "$theDir" ]
+then
+        # Add the date extension for each file in that directory
+        d=`date +%Y%m%d`
+        for file in $theDir*
+        do
+                mv "$file" "$file.$d"
+        done
+else
+        echo "this directory does not exist"
+fi

@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Function to translate message type
+Message_type()
+{
+        case "$1" in
+                "A")
+                        echo "Logon";;
+                "B")
+                        echo "News";;
+                "C")
+                        echo "Email";;
+                "D")
+                        echo "New order single";;
+                "E")
+                        echo "New order list";;
+                "F")
+                        echo "Order cancel request";;
+                "G")
+                        echo "Order cancel/replace request";;
+                "H")
+                        echo "Order status request";;
+                "J")
+                        echo "Allocation";;
+                "K")
+                        echo "List cancel request";;
+                "L")
+                        echo "List execute";;
+                "M")
+                        echo "List status request";;
+                0)
+                        echo "Heartbeat";;
+                1)
+                        echo "Test request";;
+                2)
+                        echo "Resend request";;
+                3)
+                        echo "Reject";;
+                4)
+                        echo "Sequence reset";;
+                5)
+                        echo "Logout";;
+                6)
+                        echo "Indication of interest";;
+                7)
+                        echo "Advertisement";;
+                8)
+                        echo "Execution report";;
+                9)
+                        echo "Order cancel reject";;
+
+                esac
+
+}
+
+# Import the logfile from fixGenerator
+LOG_FILE="/home/$USER/fixlog*"
+
+# Header for csv file
+echo "Client, Message type, stock, quantity, price, side, order id, last quantity, exec id, last price" > fix.csv
+
+# Go through each line
+while read line
+do
+        # Put the value of each tag in a variable
+        client=$(echo $line | grep -oP '(?<=49=).*?(?=;)')
+        msgType=$(echo $line | grep -oP '(?<=35=).*?(?=;)')
+        stock=$(echo $line | grep -oP '(?<=40=).*?(?=;)')
+        quantity=$(echo $line | grep -oP '(?<=38=).*?(?=;)')
+        price=$(echo $line | grep -oP '(?<=44=).*?(?=;)')
+        side=$(echo $line | grep -oP '(?<=54=).*?(?=;)')
+        orderId=$(echo $line | grep -oP '(?<=37=).*?(?=;)')
+        lastQty=$(echo $line | grep -oP '(?<=32=).*?(?=;)')
+        execId=$(echo $line | grep -oP '(?<=17=).*?(?=;)')
+        lastPrice=$(echo $line | grep -oP '(?<=31=).*?(?=;)')
+
+        # Translate the message type value
+        msgType_modified=$(Message_type $msgType)
+        echo $client, $msgType_modified, $stock, $quantity, $price, $side, $orderId, $lastQty, $execId, $lastPrice >> fix.csv
+
+done < $LOG_FILE

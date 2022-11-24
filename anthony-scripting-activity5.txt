@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# user input
+read -p "Enter a number you want to reverse: " num
+
+#reverse the number
+echo $num | rev

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+exist()
+{
+        if [[ -f "$1" ]]; then
+                echo "The file already exist!"
+                exit 1
+        else
+                touch "$1"
+        fi
+}
+
+# Enter the file name
+read -p "Enter the file name: " file
+exist $file

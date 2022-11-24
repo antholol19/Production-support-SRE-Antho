@@ -1,0 +1,117 @@
+#!/bin/bash
+
+#function to enter the numbers
+inputs()
+{
+array=()
+count=1
+
+# loop until 10 numbers are entered
+while [ $count -le 10 ]
+do
+        # verify if 5 numbers have been entered
+        if [ $count -gt 5 ]; then
+
+                # Ask the user if they want to enter more numbers
+                read -p "Would you like to enter another number? [y/n]: " ans
+
+                #Verify what their answer is
+                if [ ${ans^} == "N" ] 2>/dev/null; then
+                        echo "Stop entering number"
+                        break
+                elif [ ${ans^} == "Y" ] 2>/dev/null; then
+                        read -p "Enter an number: " num
+
+                        if verify $num; then
+                                (( count++ ))
+                                #add the number in the array
+                                array+=($num)
+                        else
+                                echo "This is not a number!"
+                        fi
+
+                else
+                        echo "You must enter y or n!"
+
+                fi
+        else
+                read -p "Enter an number: " num
+                if verify $num; then
+                        (( count++ ))
+                        #add the number in the array
+                        array+=($num)
+                else
+                        echo "This is not a number!"
+                fi
+        fi
+done
+}
+# Verify function to check if the prompt is an number
+verify()
+{
+        if [ $1 -eq $1 ] 2>/dev/null; then
+                return 0
+        else
+                return 1
+        fi
+}
+# Perform calculations
+# product function
+product()
+{
+        local val=1
+        for i in ${array[*]}; do
+                (( val *= i ))
+        done
+        echo $val
+}
+
+# average function
+average()
+{
+        local n=${#array[@]}
+        ave=$(( $(sum) / $n ))
+        echo $ave
+}
+
+sum()
+{
+        local val=0
+        for i in ${array[@]}; do
+                (( val += i ))
+        done
+        echo $val
+
+}
+
+min()
+{
+        local mini=${array[0]}
+        for i in ${array[@]}; do
+                if [ $mini -gt $i ]; then
+                        mini=$i
+                fi
+        done
+        echo $mini
+
+}
+
+max()
+{
+        local maxi=${array[0]}
+        for i in ${array[@]}; do
+                if [ $maxi -lt $i ]; then
+                        maxi=$i
+                fi
+        done
+        echo $maxi
+}
+
+inputs
+echo "There are the numbers you have entered: " ${array[@]}
+echo "****Calculations****"
+echo "The product of integers is:" $(product)
+echo "The average is:" $(average)
+echo "The sum is:" $(sum)
+echo "The minimum integer is:" $(min)
+echo "The maximum integer is:" $(max)

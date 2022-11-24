@@ -1,0 +1,45 @@
+#!/bin/bash
+
+goodPass="no"
+until [ $goodPass == "yes" ]
+do
+        echo "Your password must be 8 or more character, contain numbers and letters and and should be both uppercase and lowercase"
+
+        # Input someone password
+        read -p "Password: " pass
+
+        # Length of the password
+        n=${#pass}
+
+        number=0
+        uppercase=0
+        lowercase=0
+
+        # Verify if the character is upper, lower letter or number
+        for (( i=0; i<$n; i++ ))
+        do
+                if [[ ${pass:$i:1} =~ [A-Z] ]]
+                then
+                        (( uppercase++ ))
+                elif [[ ${pass:$i:1} =~ [a-z] ]]
+                then
+                        (( lowercase++ ))
+                else
+                        (( number++ ))
+                fi
+        done
+
+        # Verify if all the criteria matches
+        if [ $n -ge 8 ] && [ $uppercase -gt 0 ] && [ $lowercase -gt 0 ] && [ $number -gt 0 ]
+        then
+                echo "Strong password"
+                goodPass="yes"
+        else
+                echo "modify your password"
+        fi
+done
+echo "Password accepted"
+
+
+
+

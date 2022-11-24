@@ -1,0 +1,119 @@
+#!/bin/bash
+
+# Message type (tag 35)
+declare -A msgType
+msgType["A"]="logon"
+msgType["B"]="news"
+msgType["C"]="email"
+msgType["D"]="new order single"
+msgType["E"]="new order list"
+msgType["F"]="order cancel resquest"
+msgType["G"]="order cancel/replace request"
+msgType["H"]="order status request"
+msgType["J"]="allocation"
+msgType["K"]="list cancel request"
+msgType["L"]="list execute"
+msgType["M"]="list status request"
+msgType[0]="heartbeat"
+msgType[1]="test request"
+msgType[2]="resend request"
+msgType[3]="reject"
+msgType[4]="sequence reset"
+msgType[5]="logout"
+msgType[6]="indication of interest"
+msgType[7]="advertisement"
+msgType[8]="execution report"
+msgType[9]="order cancel reject"
+
+# Execution report message tag 20
+declare -A execRepMsg
+execRepMsg[0]="new order acknowledgement"
+execRepMsg[1]="cancel previously reported execution due to error"
+execRepMsg[2]="correction to the previously reported execution"
+execRepMsg[3]="reports the status of the orders"
+
+# Execution type tag 150
+declare -A execType
+execType[0]="new"
+execType[1]="partial fill"
+execType[2]="fill"
+execType[3]="done for day"
+execType[4]="cancelled"
+execType[5]="replace"
+execType[6]="pending cancel"
+execType[7]="stopped set"
+execType[8]="rejected"
+execType[9]="suspended"
+execType["A"]="pending new"
+execType["B"]="calculated"
+execType["C"]="expired"
+execType["D"]="restated"
+execType["E"]="pending replace"
+
+# Order status tag 39
+declare -A ordStatus
+ordStatus[0]="new"
+ordStatus[1]="partial fill"
+ordStatus[2]="filled"
+ordStatus[3]="done for day"
+ordStatus[4]="cancelled"
+ordStatus[5]="replace"
+ordStatus[6]="pending cancel"
+ordStatus[7]="stopped cancel/replace request"
+ordStatus[8]="rejected"
+ordStatus[9]="suspended"
+ordStatus["A"]="pending new"
+ordStatus["B"]="calculated"
+ordStatus["C"]="expired"
+ordStatus["D"]="accepted for"
+ordStatus["E"]="pending replace"
+
+# Import the logfile from fixGenerator
+LOG_FILE="/home/$USER/fixlog*"
+
+# create a log file to translate the fixlog file
+touch "/home/$USER/translateFix.log"
+
+# Go through each line
+while read line
+do
+        # Put the value of each tag in a variable
+        messageType=$(echo $line | grep -oP '(?<=35=).*?(?=;)')
+        stat=$(echo $line | grep -oP '(?<=39=).*?(?=;)')
+        client=$(echo $line | grep -oP '(?<=49=).*?(?=;)')
+        orderId=$(echo $line | grep -oP '(?<=37=).*?(?=;)')
+        quantity=$(echo $line | grep -oP '(?<=38=).*?(?=;)')
+        price=$(echo $line | grep -oP '(?<=44=).*?(?=;)')
+
+        # Translate the message type tag value
+        msgType_translate=${msgType[$messageType]}
+
+        # Translate each tag to give a meaning for execution
+        if  [[ "$messageType" == "8" ]]; then
+                status_translate=${ordStatus[$stat]}
+                 # Translate each tag to give a meaning
+                if [[ -z "$client" ]]; then
+                        echo $status_translate>> /home/$USER/translateFix.log
+
+                else
+                        if [[ -z "$orderId" ]]; then
+                                echo $status_translate "for" $client >> /home/$USER/translateFix.log
+
+                        else
+                                if [[ -z "$quantity" ]]; then
+                                        echo $status_translate "for" $client "with order id" $orderId >> /home/$USER/translateFix.log
+                                else
+                                        if [[ -z "$price" ]]; then
+                                                echo $status_translate "for" $client "with order id" $orderId >> /home/$USER/translateFix.log
+                                        else
+                                                 echo $status_translate "for" $client "with order id" $orderId, $quantity "shares at price" $price >> /home/$USER/translateFix.log
+                                        fi
+                                fi
+                        fi
+
+                fi
+
+        fi
+
+done < $LOG_FILE
+

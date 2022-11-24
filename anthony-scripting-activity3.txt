@@ -1,0 +1,53 @@
+#!/bin/sh
+
+#Generate 5 random numbers between 1 and 50
+count=1
+array=()
+while [ $count -le 5 ]
+do
+        array+=( $(( $RANDOM % 50 + 1 )) )
+        (( count++ ))
+done
+
+#direct a random number between 1 and 10 in the lottery file
+array+=( $(( $RANDOM % 10 + 1 )) )
+
+#Change the today date form to YYYYMMDD
+d=`date +%Y%m%d`
+
+# Direct the lottery numbers with the current date as file name
+echo ${array[@]} > $d".txt"
+
+
+#*****Second script*******
+
+#!/bin/sh
+
+#Lottery for the current date
+
+d=`date +%Y%m%d`
+
+file=$d".txt"
+
+# Import the random lottery numbers of today
+array=()
+while read line; do
+        array+=($line)
+done < $file
+
+#Ask the user to put their lottery numbers and put them in an array
+echo "Add your lottery numbers: "
+read -a num
+
+# Loop in arrays and compare each number
+count=0
+for (( i=0 ; i < ${#array[@]}; i++ )); do
+        if [ ${num[$i]} -eq ${array[$i]} ] 2>/dev/null; then
+                echo "number" ${num[$i]} "matches!"
+                (( count++ ))
+        else
+                echo "number" ${num[$i]} "does not match!"
+        fi
+done
+echo "You have" $count "match!"
+
